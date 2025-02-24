@@ -1,6 +1,6 @@
 # Sanctions Risk Dashboard
 
-A Python-based analytics dashboard for monitoring and analyzing economic sanctions risk exposure in financial transactions.
+A Python-based toy analytics dashboard for monitoring and analysing economic sanctions risk exposure in financial transactions.
 
 
 
