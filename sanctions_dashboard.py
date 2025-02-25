@@ -1,20 +1,27 @@
 import dash
 from dash import dcc, html, dash_table
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import plotly.express as px
+import pandas as pd
 
 from modules.riskanalysis import SanctionsRiskAnalyser
 from modules.data import generate_transaction_data
 
 # ------- DASH APP -------
 
-# Generate our data
+# Default confidence level
+DEFAULT_CONFIDENCE = 0.95
+
+# Generate data
 transactions = generate_transaction_data(5000)
 risk_analyzer = SanctionsRiskAnalyser(transactions)
-risk_report = risk_analyzer.generate_risk_report()
 
-# Initialize the app
+# Get the initial risk report at default confidence level
+initial_report = risk_analyzer.generate_risk_report(confidence_level=DEFAULT_CONFIDENCE)
+
+# Initialise the app
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
+
 
 # App layout
 app.layout = html.Div(
@@ -36,24 +43,65 @@ app.layout = html.Div(
                 ),
             ]
         ),
-        # Key Metrics
+        # Key Metrics with Threshold Settings
         html.Div(
             [
-                html.H3(
-                    "Key Risk Metrics", style={"color": "#2c3e50", "padding": "10px"}
-                ),
                 html.Div(
                     [
+                        html.H3(
+                            "Key Risk Metrics",
+                            style={"color": "#2c3e50", "padding": "10px"},
+                        ),
+                        html.Div(
+                            [
+                                html.Label("VaR Confidence Level:"),
+                                dcc.Slider(
+                                    id="var-confidence-slider",
+                                    min=0.9,
+                                    max=0.995,
+                                    step=0.005,
+                                    value=DEFAULT_CONFIDENCE,
+                                    marks={i / 100: f"{i}%" for i in range(90, 100, 2)},
+                                    tooltip={
+                                        "placement": "bottom",
+                                        "always_visible": True,
+                                    },
+                                ),
+                            ],
+                            style={"marginBottom": "20px", "padding": "10px"},
+                        ),
+                        html.Button(
+                            "Update Risk Metrics",
+                            id="update-metrics-button",
+                            style={
+                                "backgroundColor": "#3498db",
+                                "color": "white",
+                                "border": "none",
+                                "padding": "10px 20px",
+                                "borderRadius": "5px",
+                                "cursor": "pointer",
+                                "marginBottom": "20px",
+                                "marginLeft": "10px",
+                            },
+                        ),
+                    ],
+                    className="row",
+                ),
+                html.Div(
+                    id="metrics-container",
+                    className="row",
+                    children=[
+                        # Initialize with default metrics
                         html.Div(
                             [
                                 html.Div(
                                     [
                                         html.H4(
-                                            "Historical VaR (95%)",
+                                            f"Historical VaR ({DEFAULT_CONFIDENCE*100:.0f}%)",
                                             style={"textAlign": "center"},
                                         ),
                                         html.H2(
-                                            f"${risk_report['risk_metrics'].loc[0, 'Value']:,.2f}",
+                                            f"${initial_report['risk_metrics'].loc[0, 'Value']:,.2f}",
                                             style={
                                                 "textAlign": "center",
                                                 "color": "#e74c3c",
@@ -70,11 +118,11 @@ app.layout = html.Div(
                                 html.Div(
                                     [
                                         html.H4(
-                                            "Parametric VaR (95%)",
+                                            f"Parametric VaR ({DEFAULT_CONFIDENCE*100:.0f}%)",
                                             style={"textAlign": "center"},
                                         ),
                                         html.H2(
-                                            f"${risk_report['risk_metrics'].loc[1, 'Value']:,.2f}",
+                                            f"${initial_report['risk_metrics'].loc[1, 'Value']:,.2f}",
                                             style={
                                                 "textAlign": "center",
                                                 "color": "#e67e22",
@@ -91,11 +139,11 @@ app.layout = html.Div(
                                 html.Div(
                                     [
                                         html.H4(
-                                            "Monte Carlo VaR (95%)",
+                                            f"Monte Carlo VaR ({DEFAULT_CONFIDENCE*100:.0f}%)",
                                             style={"textAlign": "center"},
                                         ),
                                         html.H2(
-                                            f"${risk_report['risk_metrics'].loc[2, 'Value']:,.2f}",
+                                            f"${initial_report['risk_metrics'].loc[2, 'Value']:,.2f}",
                                             style={
                                                 "textAlign": "center",
                                                 "color": "#f39c12",
@@ -112,11 +160,11 @@ app.layout = html.Div(
                                 html.Div(
                                     [
                                         html.H4(
-                                            "Expected Shortfall (95%)",
+                                            f"Expected Shortfall ({DEFAULT_CONFIDENCE*100:.0f}%)",
                                             style={"textAlign": "center"},
                                         ),
                                         html.H2(
-                                            f"${risk_report['risk_metrics'].loc[3, 'Value']:,.2f}",
+                                            f"${initial_report['risk_metrics'].loc[3, 'Value']:,.2f}",
                                             style={
                                                 "textAlign": "center",
                                                 "color": "#c0392b",
@@ -129,7 +177,6 @@ app.layout = html.Div(
                             className="three columns",
                         ),
                     ],
-                    className="row",
                 ),
             ],
             className="row section",
@@ -147,7 +194,7 @@ app.layout = html.Div(
                         dcc.Graph(
                             id="country-exposure-chart",
                             figure=px.bar(
-                                risk_report["country_exposure"].sort_values(
+                                initial_report["country_exposure"].sort_values(
                                     "Total", ascending=False
                                 ),
                                 x="Country",
@@ -159,8 +206,8 @@ app.layout = html.Div(
                                 },
                                 barmode="group",
                                 color_discrete_map={
-                                    "Incoming": "#3498db",
-                                    "Outgoing": "#2980b9",
+                                    "Incoming": "#2ecc71",
+                                    "Outgoing": "#e74c3c",
                                 },
                             ),
                         ),
@@ -177,7 +224,7 @@ app.layout = html.Div(
                         dcc.Graph(
                             id="time-series-chart",
                             figure=px.line(
-                                risk_report["time_series"],
+                                initial_report["time_series"],
                                 x="date",
                                 y=["amount", "sanctions_exposure"],
                                 title="Daily Transaction Volume",
@@ -259,7 +306,7 @@ app.layout = html.Div(
                         {"name": "Sender Country", "id": "sender_country"},
                         {"name": "Receiver Country", "id": "receiver_country"},
                     ],
-                    data=risk_report["flagged_transactions"].to_dict("records"),
+                    data=initial_report["flagged_transactions"].to_dict("records"),
                     page_size=10,
                     style_table={"overflowX": "auto"},
                     style_cell={
@@ -311,26 +358,144 @@ app.layout = html.Div(
             ],
             className="row section",
         ),
+        # Store the flagged transactions for filtering
+        dcc.Store(
+            id="flagged-transactions-store",
+            data=initial_report["flagged_transactions"].to_dict("records"),
+        ),
     ],
     style={"maxWidth": "1200px", "margin": "0 auto"},
 )
 
 
+# Callback to update the risk metrics with custom confidence level
+@app.callback(
+    Output("metrics-container", "children"),
+    [Input("update-metrics-button", "n_clicks")],
+    [State("var-confidence-slider", "value")],
+    prevent_initial_call=True,
+)
+def update_risk_metrics(n_clicks, confidence_level):
+    # Generate risk report with custom confidence level
+    # We only need the risk metrics part
+    risk_report = risk_analyzer.generate_risk_report(confidence_level=confidence_level)
+    metrics_df = risk_report["risk_metrics"]
+
+    # Create the metrics display
+    metrics_display = [
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.H4(
+                            f"Historical VaR ({confidence_level*100:.0f}%)",
+                            style={"textAlign": "center"},
+                        ),
+                        html.H2(
+                            f"${metrics_df.loc[0, 'Value']:,.2f}",
+                            style={
+                                "textAlign": "center",
+                                "color": "#e74c3c",
+                            },
+                        ),
+                    ],
+                    className="metric-box",
+                )
+            ],
+            className="three columns",
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.H4(
+                            f"Parametric VaR ({confidence_level*100:.0f}%)",
+                            style={"textAlign": "center"},
+                        ),
+                        html.H2(
+                            f"${metrics_df.loc[1, 'Value']:,.2f}",
+                            style={
+                                "textAlign": "center",
+                                "color": "#e67e22",
+                            },
+                        ),
+                    ],
+                    className="metric-box",
+                )
+            ],
+            className="three columns",
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.H4(
+                            f"Monte Carlo VaR ({confidence_level*100:.0f}%)",
+                            style={"textAlign": "center"},
+                        ),
+                        html.H2(
+                            f"${metrics_df.loc[2, 'Value']:,.2f}",
+                            style={
+                                "textAlign": "center",
+                                "color": "#f39c12",
+                            },
+                        ),
+                    ],
+                    className="metric-box",
+                )
+            ],
+            className="three columns",
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.H4(
+                            f"Expected Shortfall ({confidence_level*100:.0f}%)",
+                            style={"textAlign": "center"},
+                        ),
+                        html.H2(
+                            f"${metrics_df.loc[3, 'Value']:,.2f}",
+                            style={
+                                "textAlign": "center",
+                                "color": "#c0392b",
+                            },
+                        ),
+                    ],
+                    className="metric-box",
+                )
+            ],
+            className="three columns",
+        ),
+    ]
+
+    return metrics_display
+
+
 # Callback for filtering transactions
 @app.callback(
     Output("transaction-table", "data"),
-    [Input("country-filter", "value"), Input("amount-slider", "value")],
+    [
+        Input("country-filter", "value"),
+        Input("amount-slider", "value"),
+        Input("flagged-transactions-store", "data"),
+    ],
 )
-def update_table(countries, min_amount):
-    # Start with all flagged transactions
-    filtered_data = risk_report["flagged_transactions"]
+def update_table(countries, min_amount, flagged_transactions_data):
+    if not flagged_transactions_data:
+        return []
+
+    # Convert back to DataFrame
+    flagged_transactions = pd.DataFrame(flagged_transactions_data)
 
     # Apply country filter if selected
     if countries and len(countries) > 0:
-        filtered_data = filtered_data[
-            (filtered_data["sender_country"].isin(countries))
-            | (filtered_data["receiver_country"].isin(countries))
+        filtered_data = flagged_transactions[
+            (flagged_transactions["sender_country"].isin(countries))
+            | (flagged_transactions["receiver_country"].isin(countries))
         ]
+    else:
+        filtered_data = flagged_transactions
 
     # Apply amount filter
     filtered_data = filtered_data[filtered_data["amount"] >= min_amount]

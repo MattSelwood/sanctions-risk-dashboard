@@ -87,12 +87,12 @@ class SanctionsRiskAnalyser:
 
         return total_exposure.reset_index().rename(columns={'index': 'Country'})
 
-    def generate_risk_report(self):
+    def generate_risk_report(self, confidence_level=0.95):
         """Generate a comprehensive risk report"""
-        var_hist = self.calculate_var(method="historical")
-        var_param = self.calculate_var(method="parametric")
-        var_mc = self.calculate_var(method="monte_carlo")
-        es = self.calculate_expected_shortfall()
+        var_hist = self.calculate_var(confidence_level=confidence_level, method="historical")
+        var_param = self.calculate_var(confidence_level=confidence_level, method="parametric")
+        var_mc = self.calculate_var(confidence_level=confidence_level, method="monte_carlo")
+        es = self.calculate_expected_shortfall(confidence_level=confidence_level)
         country_exposure = self.sanction_exposure_by_country()
 
         # Create risk metrics dataframe
