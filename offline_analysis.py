@@ -8,12 +8,12 @@ def main():
     print("Generating transaction data...")
     transactions = generate_transaction_data(5000)
 
-    # 2. Initialize risk analyzer
-    print("Analyzing risk metrics...")
-    risk_analyzer = SanctionsRiskAnalyser(transactions)
-    risk_report = risk_analyzer.generate_risk_report()
+    # 2. Initialize risk analyser
+    print("Analysing risk metrics...")
+    risk_analyser = SanctionsRiskAnalyser(transactions)
+    risk_report = risk_analyser.generate_risk_report()
 
-    # 3. Prepare data for visualization
+    # 3. Prepare data for visualisation
     print("Preparing data for dashboard...")
     tableau_data = export_data(transactions, risk_report)
 
