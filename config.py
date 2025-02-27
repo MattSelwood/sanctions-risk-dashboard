@@ -2,6 +2,9 @@
 Configuration settings for the Sanctions Dashboard.
 """
 
+# Random seed
+RANDOM_SEED = 1337
+
 # Application settings
 DEBUG = True
 DEFAULT_CONFIDENCE = 0.95

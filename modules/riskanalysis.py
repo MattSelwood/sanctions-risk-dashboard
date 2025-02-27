@@ -2,12 +2,13 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 
+from config import DEFAULT_CONFIDENCE
 
 class SanctionsRiskAnalyser:
     def __init__(self, transaction_data):
         self.data = transaction_data
         self.portfolio_values = None
-        self.confidence_level = 0.95
+        self.confidence_level = DEFAULT_CONFIDENCE
         self.latest_value = None
         self.daily_returns = None
 
@@ -25,7 +26,7 @@ class SanctionsRiskAnalyser:
 
         return daily_returns
 
-    def calculate_var(self, confidence_level=0.95, method="historical"):
+    def calculate_var(self, confidence_level=DEFAULT_CONFIDENCE, method="historical"):
         """Calculate Value at Risk"""
         if self.daily_returns is None:
             self.prepare_portfolio_data()
@@ -53,7 +54,7 @@ class SanctionsRiskAnalyser:
 
         return var_amount
 
-    def calculate_expected_shortfall(self, confidence_level=0.95):
+    def calculate_expected_shortfall(self, confidence_level=DEFAULT_CONFIDENCE):
         """Calculate Expected Shortfall (Conditional VaR)"""
         if self.daily_returns is None:
             self.prepare_portfolio_data()
@@ -87,7 +88,7 @@ class SanctionsRiskAnalyser:
 
         return total_exposure.reset_index().rename(columns={'index': 'Country'})
 
-    def generate_risk_report(self, confidence_level=0.95):
+    def generate_risk_report(self, confidence_level=DEFAULT_CONFIDENCE):
         """Generate a comprehensive risk report"""
         var_hist = self.calculate_var(confidence_level=confidence_level, method="historical")
         var_param = self.calculate_var(confidence_level=confidence_level, method="parametric")

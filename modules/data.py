@@ -3,8 +3,8 @@ import numpy as np
 import requests
 from datetime import datetime, timedelta
 
+from config import RANDOM_SEED
 
-# Sample function to download and clean OFAC SDN data
 def get_ofac_data():
     # URL for OFAC SDN list (XML format)
     ofac_url = "https://www.treasury.gov/ofac/downloads/sdn.xml"
@@ -28,7 +28,7 @@ def get_ofac_data():
 
 # Generate synthetic transaction data
 def generate_transaction_data(num_transactions=1000):
-    np.random.seed(1337)  # For reproducibility
+    np.random.seed(RANDOM_SEED)  # For reproducibility
 
     countries = [
         "USA",
