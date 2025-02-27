@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from config import RANDOM_SEED
 
+
 def get_ofac_data():
     # URL for OFAC SDN list (XML format)
     ofac_url = "https://www.treasury.gov/ofac/downloads/sdn.xml"
@@ -73,7 +74,6 @@ def generate_transaction_data(num_transactions=1000):
     end_date = datetime.now()
     start_date = end_date - timedelta(days=365)
     dates = pd.date_range(start=start_date, end=end_date, periods=num_transactions)
-
 
     # Generate transaction data
     transactions = {

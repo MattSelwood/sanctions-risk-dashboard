@@ -15,7 +15,7 @@ from components.compliance_report_tab import create_compliance_report_tab
 from components.risk_overview_tab import create_risk_overview_tab
 
 from callbacks.network_callbacks import register_network_callbacks
-
+from callbacks.filter_callbacks import register_filter_callbacks
 
 
 # Initialize the Dash app
@@ -42,7 +42,9 @@ def create_layout(
             # Tabs for different views
             dbc.Tabs(
                 [
-                    create_risk_overview_tab(compliance_report, country_exposure, transactions),
+                    create_risk_overview_tab(
+                        compliance_report, country_exposure, transactions
+                    ),
                     create_transaction_analysis_tab(scored_data),
                     # create_network_analysis_tab(network_analysis),
                     create_anomaly_detection_tab(anomaly_data),
@@ -97,6 +99,7 @@ def initialise_app():
 
     # Register callbacks
     # register_network_callbacks(app, network_analysis, scored_data)
+    register_filter_callbacks(app)
 
     return app, transactions, analyser, compliance_report
 

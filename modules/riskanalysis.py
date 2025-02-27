@@ -58,7 +58,7 @@ class SanctionsRiskAnalyser:
                 "flag_rate", ascending=False
             ),
         }
-    
+
     def sanction_exposure_by_country(self):
         """Calculate exposure to sanctioned countries"""
         # Group by country and calculate total exposure
@@ -72,7 +72,7 @@ class SanctionsRiskAnalyser:
             "Incoming"
         ].fillna(0)
 
-        return total_exposure.reset_index().rename(columns={'index': 'Country'})
+        return total_exposure.reset_index().rename(columns={"index": "Country"})
 
     def transaction_risk_scoring(self, weights=None):
         """

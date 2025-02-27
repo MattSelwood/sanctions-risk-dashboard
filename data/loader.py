@@ -52,4 +52,3 @@ def initialise_data():
         network_analysis,
         compliance_report,
     )
-

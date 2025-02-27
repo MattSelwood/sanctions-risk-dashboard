@@ -16,13 +16,22 @@ def create_header():
     """
     return dbc.Row(
         [
-            dbc.Col([
-            html.H1("Sanctions Risk Analysis Dashboard", className="text-center my-4"),
-            html.Hr(),
-            html.P(
-                "Analysis of transaction risk exposure to sanctioned countries",
-                style={"textAlign": "center", "color": COLOURS["subheader_text"]},
-            ),
-        ], width=12)
+            dbc.Col(
+                [
+                    html.H1(
+                        "Sanctions Risk Analysis Dashboard",
+                        className="text-center my-4",
+                    ),
+                    html.Hr(),
+                    html.P(
+                        "Analysis of transaction risk exposure to sanctioned countries",
+                        style={
+                            "textAlign": "center",
+                            "color": COLOURS["subheader_text"],
+                        },
+                    ),
+                ],
+                width=12,
+            )
         ]
     )
