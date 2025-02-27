@@ -383,7 +383,7 @@ class SanctionsRiskAnalyser:
         ]
 
         # Standardize features
-        data = data.dropna()
+        data = data.fillna(0)
         scaler = StandardScaler()
         scaled_features = scaler.fit_transform(data[features])
 
