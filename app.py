@@ -42,7 +42,7 @@ def create_layout(
             # Tabs for different views
             dbc.Tabs(
                 [
-                    create_risk_overview_tab(compliance_report, country_exposure),
+                    create_risk_overview_tab(compliance_report, country_exposure, transactions),
                     create_transaction_analysis_tab(scored_data),
                     # create_network_analysis_tab(network_analysis),
                     create_anomaly_detection_tab(anomaly_data),
@@ -53,7 +53,7 @@ def create_layout(
             html.Footer(
                 [
                     html.P(
-                        "Sanctions Risk Analysis Dashboard - Created with Plotly Dash",
+                        "Sanctions Risk Analysis Dashboard - Created by Matthew Selwood with Plotly Dash",
                         className="text-center text-muted my-4",
                     )
                 ]

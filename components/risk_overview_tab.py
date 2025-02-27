@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 from dash import dcc
 import plotly.express as px
 
-def create_risk_overview_tab(compliance_report, country_exposure_data):
+def create_risk_overview_tab(compliance_report, country_exposure_data, transactions):
     return dbc.Tab(label="Risk Overview", children=[
         dbc.Row([
             dbc.Col([
@@ -51,7 +51,7 @@ def create_risk_overview_tab(compliance_report, country_exposure_data):
         dbc.Row([
             dbc.Col([
                 dbc.Card([
-                    dbc.CardHeader("Country Exposure Analysis"),
+                    dbc.CardHeader("Country Risk Analysis"),
                     dbc.CardBody([
                         dcc.Graph(
                             id="country-exposure-chart",
@@ -59,7 +59,7 @@ def create_risk_overview_tab(compliance_report, country_exposure_data):
                                 country_exposure_data.sort_values("Total", ascending=False),
                                 x="Country",
                                 y=["Incoming", "Outgoing"],
-                                title="Exposure by Country",
+                                title="Sanctions Exposure by Country",
                                 labels={"value": "Transaction Amount ($)", "variable": "Direction"},
                                 barmode="group",
                                 color_discrete_map={"Incoming": "#2ecc71", "Outgoing": "#e74c3c"},
@@ -67,6 +67,32 @@ def create_risk_overview_tab(compliance_report, country_exposure_data):
                         )
                     ])
                 ], className="mb-4 shadow")
-            ], width=12)
+            ], width=6),
+
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader("Transaction Risk Heatmap"),
+                    dbc.CardBody([
+                        dcc.Graph(
+                            id="risk-heatmap",
+                            figure=px.density_heatmap(
+                                transactions[transactions["sanctions_flag"] == 1],
+                                x="sender_country",
+                                y="receiver_country",
+                                z="amount",
+                                title="Flagged Transaction Heatmap",
+                                labels={
+                                    "sender_country": "Sender Country",
+                                    "receiver_country": "Receiver Country",
+                                    "amount": "Transaction Amount ($)",
+                                },
+                                color_continuous_scale="Plasma",
+                            ),
+                        )
+                    ])
+                ], className="mb-4 shadow")
+            ], width=6)
         ])
+
+        
     ])
