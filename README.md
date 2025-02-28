@@ -43,6 +43,14 @@ This project provides a complete end-to-end solution for analysing transaction d
 
 ## **Screenshots**  
 
+![image](https://github.com/user-attachments/assets/fadb4a71-683e-4824-a516-7788da6c8dc0)
+
+![image](https://github.com/user-attachments/assets/29ddd069-1110-491a-9c58-ac3c55490d6e)
+
+![image](https://github.com/user-attachments/assets/f3c96dad-9855-407b-9360-64fc118d9a3f)
+
+![image](https://github.com/user-attachments/assets/960895f0-086b-4489-aa78-53f1acd4c8a3)
+
 
 ## **Technology Stack**
 
