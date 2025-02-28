@@ -3,7 +3,7 @@ Data loading functions for the Sanctions Dashboard.
 """
 
 import pandas as pd
-from modules.riskanalysis import SanctionsRiskAnalyser
+from modules.sanctions_risk_analyser import SanctionsRiskAnalyser
 from modules.data import generate_transaction_data
 from config import DEFAULT_SAMPLE_SIZE
 
