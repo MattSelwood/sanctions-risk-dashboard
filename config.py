@@ -30,6 +30,12 @@ RISK_SCORE_WEIGHTS = {
     "frequency_anomaly": 0.1,
 }
 
+ANOMALY_DETECTION_WEIGHTS = {
+    "amount_zscore": 0.3,
+    "freq_percentile": 0.3,
+    "high_risk_pattern": 0.4
+}
+
 # Colour scheme
 COLOURS = {
     "historical_var": "#e74c3c",

@@ -4,6 +4,8 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from typing import Dict, Any
 
+from config import ANOMALY_DETECTION_WEIGHTS
+
 class AnomalyDetector:
     def __init__(self, transaction_data: pd.DataFrame):
         """
@@ -12,6 +14,7 @@ class AnomalyDetector:
         :param transaction_data: DataFrame containing transaction data
         """
         self.data = transaction_data
+        self.weights = ANOMALY_DETECTION_WEIGHTS
 
     def _feature_engineering(self, data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -108,9 +111,9 @@ class AnomalyDetector:
         data["cluster"] = cluster_data["cluster"]
         data["high_risk_pattern"] = cluster_data["cluster"] == high_risk_cluster
         data["anomaly_score"] = (
-            data["amount_zscore"].abs() * 0.3
-            + (data["freq_percentile"] / 100) * 0.3
-            + data["high_risk_pattern"].astype(int) * 0.4
+            data["amount_zscore"].abs() * self.weights["amount_zscore"]
+            + (data["freq_percentile"] / 100) * self.weights["freq_percentile"]
+            + data["high_risk_pattern"].astype(int) * self.weights["high_risk_pattern"]
         )
         top_anomalies = data.sort_values("anomaly_score", ascending=False).head(20)
         return {
