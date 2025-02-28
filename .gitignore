@@ -1,3 +1,5 @@
 .venv
+.old
+.images
 todo
 __pycache__/

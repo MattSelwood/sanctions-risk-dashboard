@@ -1,47 +1,67 @@
-"""
-Main application file for the Sanctions Dashboard.
-"""
-
 import dash
 from dash import html
+import dash_bootstrap_components as dbc
 
-# Import configuration
-from config import DEBUG, DEFAULT_CONFIDENCE
 
-# Import data handling
 from data.loader import initialise_data
 
-# Import layout components
-from components.header import create_header
-from components.metrics import create_risk_metrics_section
-from components.charts import create_charts_section
-from components.transactions import create_transactions_section, create_risk_heatmap
 
-# Import callbacks
-from callbacks.metrics_callbacks import register_metrics_callbacks
+from components.header import create_header
+from components.kpi_cards import create_kpi_cards
+from components.transaction_analysis_tab import create_transaction_analysis_tab
+from components.network_analysis_tab import create_network_analysis_tab
+from components.anomaly_detection_tab import create_anomaly_detection_tab
+from components.compliance_report_tab import create_compliance_report_tab
+from components.risk_overview_tab import create_risk_overview_tab
+
+from callbacks.network_callbacks import register_network_callbacks
 from callbacks.filter_callbacks import register_filter_callbacks
 
 
-def create_layout(transactions, initial_report):
+# Initialize the Dash app
+def create_layout(
+    transactions, compliance_report, country_exposure, scored_data, anomaly_data
+):
     """
     Create the main app layout.
 
     Args:
         transactions (DataFrame): Transaction data
-        initial_report (dict): Initial risk report data
+        compliance_report (dict): Compliance report data
+        country_exposure (DataFrame): Country exposure data
+        scored_data (DataFrame): Scored transaction data
+        anomaly_data (DataFrame): Anomaly detection
 
     Returns:
-        dash.html.Div: The complete dashboard layout
+        dbc.Container: Main app layout
     """
-    return html.Div(
+    return dbc.Container(
         [
             create_header(),
-            create_risk_metrics_section(initial_report, DEFAULT_CONFIDENCE),
-            create_charts_section(initial_report),
-            create_transactions_section(transactions, initial_report),
-            create_risk_heatmap(transactions),
+            create_kpi_cards(compliance_report),
+            # Tabs for different views
+            dbc.Tabs(
+                [
+                    create_risk_overview_tab(
+                        compliance_report, country_exposure, transactions
+                    ),
+                    create_transaction_analysis_tab(scored_data),
+                    # create_network_analysis_tab(network_analysis),
+                    create_anomaly_detection_tab(anomaly_data),
+                    create_compliance_report_tab(compliance_report, scored_data),
+                ],
+                className="mt-4",
+            ),
+            html.Footer(
+                [
+                    html.P(
+                        "Sanctions Risk Analysis Dashboard - Created by Matthew Selwood with Plotly Dash",
+                        className="text-center text-muted my-4",
+                    )
+                ]
+            ),
         ],
-        style={"maxWidth": "1200px", "margin": "0 auto"},
+        fluid=True,
     )
 
 
@@ -50,29 +70,41 @@ def initialise_app():
     Initialise the Dash application.
 
     Returns:
-        tuple: (app, transactions, risk_analyser, initial_report)
+        tuple: (dash.Dash, DataFrame, SanctionsRiskAnalyser, dict)
     """
     # Initialise data
-    transactions, risk_analyser, initial_report = initialise_data()
+    (
+        transactions,
+        analyser,
+        scored_data,
+        exposure_metrics,
+        country_exposure,
+        penalty_exposure,
+        anomaly_data,
+        network_analysis,
+        compliance_report,
+    ) = initialise_data()
 
     # Initialise app
-    app = dash.Dash(__name__, suppress_callback_exceptions=True)
+    app = dash.Dash(
+        __name__,
+        external_stylesheets=[dbc.themes.FLATLY],
+        suppress_callback_exceptions=True,
+    )
 
     # Set app layout
-    app.layout = create_layout(transactions, initial_report)
+    app.layout = create_layout(
+        transactions, compliance_report, country_exposure, scored_data, anomaly_data
+    )
 
     # Register callbacks
-    register_metrics_callbacks(app, risk_analyser)
+    # register_network_callbacks(app, network_analysis, scored_data)
     register_filter_callbacks(app)
 
-    return app, transactions, risk_analyser, initial_report
+    return app, transactions, analyser, compliance_report
 
 
-def main():
-    """Main entry point for the application."""
-    app, _, _, _ = initialise_app()
-    app.run_server(debug=DEBUG)
-
-
+# Run the app
 if __name__ == "__main__":
-    main()
+    app, _, _, _ = initialise_app()
+    app.run_server(debug=True)

@@ -3,9 +3,9 @@ Data loading functions for the Sanctions Dashboard.
 """
 
 import pandas as pd
-from modules.riskanalysis import SanctionsRiskAnalyser
+from modules.sanctions_risk_analyser import SanctionsRiskAnalyser
 from modules.data import generate_transaction_data
-from config import DEFAULT_CONFIDENCE, DEFAULT_SAMPLE_SIZE
+from config import DEFAULT_SAMPLE_SIZE
 
 
 def load_transaction_data(sample_size=DEFAULT_SAMPLE_SIZE):
@@ -21,47 +21,34 @@ def load_transaction_data(sample_size=DEFAULT_SAMPLE_SIZE):
     return generate_transaction_data(sample_size)
 
 
-def initialise_data(
-    sample_size=DEFAULT_SAMPLE_SIZE, confidence_level=DEFAULT_CONFIDENCE
-):
+def initialise_data():
     """
     Initialize all data needed for the dashboard.
-
-    Args:
-        sample_size (int): Number of transactions to generate
-        confidence_level (float): Confidence level for risk calculations
 
     Returns:
         tuple: (transactions DataFrame, risk_analyser object, initial_report dict)
     """
     # Generate transaction data
-    transactions = load_transaction_data(sample_size)
+    # Initialize the sample data and analyzer
+    transactions = load_transaction_data()
+    analyser = SanctionsRiskAnalyser(transactions)
 
-    # Initialize risk analyser
-    risk_analyser = SanctionsRiskAnalyser(transactions)
-
-    # Generate initial risk report
-    initial_report = risk_analyser.generate_risk_report(
-        confidence_level=confidence_level
+    # Run the analyses
+    scored_data = analyser.transaction_risk_scoring()
+    exposure_metrics = analyser.calculate_exposure_metrics()
+    country_exposure = analyser.sanction_exposure_by_country()
+    penalty_exposure = analyser.calculate_potential_penalty_exposure()
+    anomaly_data = analyser.anomaly_detection()
+    network_analysis = analyser.network_risk_analysis()
+    compliance_report = analyser.compliance_risk_report()
+    return (
+        transactions,
+        analyser,
+        scored_data,
+        exposure_metrics,
+        country_exposure,
+        penalty_exposure,
+        anomaly_data,
+        network_analysis,
+        compliance_report,
     )
-
-    return transactions, risk_analyser, initial_report
-
-
-def get_unique_countries(transactions):
-    """
-    Get list of unique countries from transaction data.
-
-    Args:
-        transactions (DataFrame): Transaction data
-
-    Returns:
-        list: List of unique countries
-    """
-    sender_countries = set(transactions["sender_country"].unique())
-    receiver_countries = set(transactions["receiver_country"].unique())
-
-    # Combine and sort
-    all_countries = sorted(list(sender_countries.union(receiver_countries)))
-
-    return all_countries

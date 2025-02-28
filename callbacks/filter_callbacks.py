@@ -18,9 +18,9 @@ def register_filter_callbacks(app):
         Output("transaction-table", "data"),
         [
             Input("country-filter", "value"),
-            Input("amount-slider", "value"),
-            Input("flagged-transactions-store", "data")
-        ]
+            Input("min-amount-filter", "value"),
+            Input("flagged-transactions-store", "data"),
+        ],
     )
     def update_table(countries, min_amount, flagged_transactions_data):
         if not flagged_transactions_data:
@@ -39,6 +39,8 @@ def register_filter_callbacks(app):
             filtered_data = flagged_transactions
 
         # Apply amount filter
-        filtered_data = filtered_data[filtered_data["amount"] >= min_amount]
+        filtered_data = filtered_data[
+            filtered_data["amount"] >= min_amount
+        ].sort_values(by="amount", ascending=False)
 
         return filtered_data.to_dict("records")

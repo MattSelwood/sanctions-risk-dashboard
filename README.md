@@ -1,55 +1,67 @@
-# Sanctions Risk Dashboard
+# **Sanctions Risk Analysis Dashboard**
 
 A Python-based toy analytics dashboard for monitoring and analysing economic sanctions risk exposure in financial transactions.
 
 
-## Overview
+## **Overview**
 
-This project provides a complete end-to-end solution for analysing transaction data to identify, quantify, and visualize potential sanctions compliance risks. It demonstrates key skills relevant to a Junior Risk Analyst position in economic sanctions compliance at a financial institution.
- 
-
- ## Features
-
- - **Transaction Risk Flagging:** Automatically identifies transactions involving sanctioned countries or entities
- - **Advanced Risk Metrics:** Calculates Value-at-Risk (VaR) and Expected Shortfall using multiple methodologies
- - **Interactive Data Visualization:** Provides a comprehensive dashboard with multiple views of risk exposure
- - **Filtering and Drill-Down:** Allows detailed analysis of specific countries, time periods, and transaction sizes
- - **Time-Series Analysis:** Tracks sanctions exposure trends over time
+This project provides a complete end-to-end solution for analysing transaction data to identify, quantify, and visualise financial risks associated with potential sanctions violations. It applies **risk scoring, penalty exposure estimation, and anomaly detection** to transactions, providing a comprehensive compliance risk report.It demonstrates key skills relevant to a Junior Risk Analyst position in economic sanctions compliance at a financial institution.
 
 
-## Components
 
-1. **Data Generation & Processing Module**
-    - Synthetic transaction data creation
-    - Sanctions screening simulation
-    - Data cleaning and preparation
+ ## **Features/Components**
+
+ ### Transaction Data Simulation
+- Synthetic transaction data creation
+- **Sanctions screening** simulation
+- Data cleaning and preparation
+
+### Risk Scoring System  
+- Assigns each transaction a **risk score** based on multiple factors  
+- Considers **transaction amount, sanctions flags, country risk, and frequency anomalies**  
+- Categorises transactions into **high, medium, and low risk groups**  
+
+### Potential Penalty Exposure  
+- Estimates **financial exposure** from potential sanctions violations  
+- Inspired by **Value at Risk (VaR), but tailored for compliance risk**  
+- Calculates a **Penalty at Risk (PaR)** metric, estimating the penalty amount that won’t be exceeded with 95% confidence  
+
+<!-- ### Network Risk Analysis  
+- Uses **graph theory** to detect **high-risk transaction pathways**  
+- Identifies **sanctions evasion patterns** and **high-risk jurisdictions**  
+- Highlights **key countries** that pose the highest network risk   -->
+
+### Anomaly Detection  
+- Uses **statistical and machine learning techniques** to identify **unusual transactions**  
+- Combines **z-scores, percentiles, and clustering** for comprehensive anomaly detection  
+- Flags **suspicious transactions** for further investigation  
+
+### Comprehensive Risk Reporting  
+- Generates a **detailed compliance risk report**  
+- Includes **summary metrics, risk by category, country risk profiles, and time trends**  
+- Identifies **highest-risk transactions** for further review 
+
+## **Screenshots**  
+
+![image](https://github.com/user-attachments/assets/fadb4a71-683e-4824-a516-7788da6c8dc0)
+
+![image](https://github.com/user-attachments/assets/29ddd069-1110-491a-9c58-ac3c55490d6e)
+
+![image](https://github.com/user-attachments/assets/f3c96dad-9855-407b-9360-64fc118d9a3f)
+
+![image](https://github.com/user-attachments/assets/960895f0-086b-4489-aa78-53f1acd4c8a3)
 
 
-2. **Risk Analysis Engine**
-    - Historical VaR calculation
-    - Parametric VaR calculation
-    - Monte Carlo VaR simulation
-    - Expected Shortfall (Conditional VaR) analysis
-    - Country exposure aggregation
-
-
-3. **Dashboard Interface**
-    - Key risk metrics display
-    - Country exposure visualization
-    - Transaction volume trends
-    - Interactive transaction filtering
-    - Risk heatmap generation
-
-
-## Technology Stack
+## **Technology Stack**
 
 - **Python:** Core programming language
 - **Pandas & NumPy:** Data manipulation and numerical analysis
 - **SciPy:** Statistical calculations
+- **Sklearn:** ML clustering analysis
 - **Plotly Dash:** Interactive dashboard framework
 - **Plotly Express:** Data visualization
 
-## Getting Started
+## **Getting Started**
 
 ### Prerequisites
 
@@ -79,73 +91,22 @@ python app.py
 
 The dashboard will be accessible at http://127.0.0.1:8050/ in your web browser.
 
-## Usage Guide
 
-### Dashboard Navigation
+## **Future Enhancements**
+- Network Risk Analysis: use **graph theory** to detect **high-risk transaction pathways** and identify **sanctions evasion patterns**.
+- Enhance **machine learning anomaly detection models**.
+- Incorporate **real transaction data**.
+- Integrate **real sanctions list and name screening algorithm**: Implement fuzzy matching for counterparty names against real sanctions lists.
+- Implement different sanctions **scenario analysis**.
 
-The dashboard consists of several sections:
-
-1. **Key Metrics Panel**: Shows VaR and Expected Shortfall values
-2. **Country Exposure Chart**: Displays transaction volume by country
-3. **Time Series Analysis**: Shows transaction trends over time
-4. **Transaction Table**: Lists flagged transactions with filtering options
-5. **Risk Heatmap**: Visualizes country-to-country risk patterns
-
-### Filtering Data
-
-- Use the country dropdown to focus on specific countries
-- Adjust the amount slider to filter transactions by value
-- Table will automatically update based on your selections
-
-## Project Structure
-
-```
-sanctions_dashboard/
-│
-├── app.py                   # Main entry point that runs the server
-├── config.py                # Configuration constants
-├── offline_analysis.py      # Script to run an offline version of the analysis
-│
-├── assets/                  # CSS, images, and other static files
-│   └── styles.css           # Custom styling
-│
-├── modules/                 # Main financial calculations
-│   ├── data.py              # Data generation / pulling scripts
-│   ├── riskanalysis.py      # Risk analysis engine class
-│   └── utils.py             # Utilities
-│
-├── components/              # Reusable UI components
-│   ├── header.py            # Header components
-│   ├── metrics.py           # Risk metrics components
-│   ├── charts.py            # Chart components
-│   └── transactions.py      # Transaction table and filters
-│
-├── data/                    # Data handling
-│   ├── loader.py            # Data loading functions
-│   └── processor.py         # Data processing functions
-│
-├── callbacks/               # App callbacks
-│   ├── metrics_callbacks.py # Callbacks for risk metrics
-│   └── filter_callbacks.py  # Callbacks for data filtering
-│
-├── Pipfile                  # Pipfile for use with pipenv
-├── Pipfile.lock             # Pipfile.lock for use with pipenv
-├── README.md                # Project documentation
-├── LICENSE                  # License information
-├── .gitattributes           # Git attributes
-└── .gitignore               # Git ignore
-```
-
-
-## Future Enhancements
-
-- **Incorporate Actual Sanctions List and Name Screening Algorithm**: Implement fuzzy matching for counterparty names against real sanctions lists
-- **Backtesting Module**: Add capability to validate VaR models against historical data
-- **Stress Testing**: Implement scenarios to test portfolio resilience
-
-## License
+## **License**
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+
+## **Contact**  
+👤 **Matt Selwood**  
+📧 https://www.linkedin.com/in/matthew-selwood/  
 
 ---
 
