@@ -57,6 +57,7 @@ This project provides a complete end-to-end solution for analysing transaction d
 - **Python:** Core programming language
 - **Pandas & NumPy:** Data manipulation and numerical analysis
 - **SciPy:** Statistical calculations
+- **Sklearn:** ML clustering analysis
 - **Plotly Dash:** Interactive dashboard framework
 - **Plotly Express:** Data visualization
 
